@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Job Application Portal</title>
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0}
+    html, body{height:100%;font-family:'Segoe UI',sans-serif}
+    body {
+      background: url('https://images.unsplash.com/photo-1600195077909-46a3a30f0c62?auto=format&fit=crop&w=1740&q=80') center/cover no-repeat;
+      display:flex; justify-content:center; align-items:center; padding:20px;
+    }
+    .section {
+      display:none;
+      width:100%; max-width:650px;
+      background:rgba(255,255,255,0.97);
+      padding:30px; border-radius:15px;
+      box-shadow:0 0 20px rgba(0,0,0,0.2);
+      text-align:center; border:2px solid #7B1FA2;
+    }
+    .visible{display:block}
+    h1{margin-bottom:20px;color:#4A148C;font-size:30px}
+    input, select, button{width:100%;padding:12px;margin:10px 0;border-radius:6px;font-size:16px;border:1px solid #ccc}
+    button{background:#009688;color:#fff;border:none;cursor:pointer;font-weight:bold}
+    button:hover{background:#00796B}
+    .button-grid{display:flex;flex-wrap:wrap;gap:12px;justify-content:center;margin-top:10px}
+    .button-grid button{padding:10px 20px;border:2px solid #7B1FA2;background:#F3E5F5;color:#4A148C;border-radius:8px;font-weight:bold}
+    .suboption-btn{background:#FFF3E0;border:2px solid #FB8C00;color:#E65100}
+    @media(max-width:600px){h1{font-size:24px} input{font-size:14px}}
+  </style>
+</head>
+<body>
+
+  <!-- Login Step -->
+  <div id="loginStep" class="section visible">
+    <h1>Login to Apply for a Job</h1>
+    <input id="nameInput" placeholder="Enter Your Name" />
+    <input id="phoneInput" placeholder="Enter Your Phone Number" />
+    <input id="emailInput" placeholder="Enter Your Email" type="email" />
+    <button onclick="submitLogin()">Submit</button>
+  </div>
+
+  <!-- Qualification Selection -->
+  <div id="qualificationStep" class="section">
+    <h1>Select Your Qualification</h1>
+    <div class="button-grid">
+      <button onclick="chooseQualification('B.Sc')">🎓 B.Sc</button>
+      <button onclick="chooseQualification('B.Tech')">🧑‍💻 B.Tech</button>
+      <button onclick="chooseQualification('MBA')">💼 MBA</button>
+    </div>
+  </div>
+
+  <!-- Job Role Selection -->
+  <div id="jobRoleStep" class="section">
+    <h1 id="qualTitle">Select Job Role</h1>
+    <div id="jobRoleGrid" class="button-grid"></div>
+  </div>
+
+  <!-- Application Form -->
+  <div id="applicationForm" class="section">
+    <h1>Application Form</h1>
+    <input id="applicantName" placeholder="Full Name" />
+    <select id="gender">
+      <option value="">Select Gender</option>
+      <option>Male</option>
+      <option>Female</option>
+      <option>Other</option>
+    </select>
+    <input id="emailField" type="email" placeholder="Email Address" />
+    <input id="phoneField" placeholder="Phone Number" />
+    <button onclick="submitApplication()">Submit Application</button>
+  </div>
+
+  <!-- Thank You Message -->
+  <div id="thankYou" class="section">
+    <h1>🎉 Thank You!</h1>
+    <p>Your application for <strong id="jobApplied"></strong> has been submitted.</p>
+    <p>We’ll get back to you soon.</p>
+  </div>
+
+<script>
+  const qualifications = {
+    "B.Sc": ['Data Analyst', 'Lab Technician', 'Research Assistant'],
+    "B.Tech": ['Software Developer', 'System Engineer', 'Network Administrator'],
+    "MBA": ['HR Manager', 'Business Analyst', 'Marketing Executive']
+  };
+
+  let user = {}, selectedQualification = '', selectedJobRole = '';
+
+  function goTo(id) {
+    ['loginStep', 'qualificationStep', 'jobRoleStep', 'applicationForm', 'thankYou'].forEach(s => {
+      document.getElementById(s).classList.remove('visible');
+    });
+    document.getElementById(id).classList.add('visible');
+  }
+
+  function submitLogin() {
+    const name = document.getElementById('nameInput').value.trim();
+    const phone = document.getElementById('phoneInput').value.trim();
+    const email = document.getElementById('emailInput').value.trim();
+    if (!name || !phone || !email) {
+      alert('Please fill all fields');
+      return;
+    }
+    user = { name, phone, email };
+    goTo('qualificationStep');
+  }
+
+  function chooseQualification(qual) {
+    selectedQualification = qual;
+    document.getElementById('qualTitle').innerText = ${qual} - Job Roles;
+    const grid = document.getElementById('jobRoleGrid');
+    grid.innerHTML = '';
+    qualifications[qual].forEach(role => {
+      const btn = document.createElement('button');
+      btn.className = 'suboption-btn';
+      btn.textContent = role;
+      btn.onclick = () => {
+        selectedJobRole = role;
+        goTo('applicationForm');
+      };
+      grid.appendChild(btn);
+    });
+    goTo('jobRoleStep');
+  }
+
+  function submitApplication() {
+    const name = document.getElementById('applicantName').value.trim();
+    const gender = document.getElementById('gender').value;
+    const email = document.getElementById('emailField').value.trim();
+    const phone = document.getElementById('phoneField').value.trim();
+
+    if (!name || !gender || !email || !phone) {
+      alert("Please fill all application fields.");
+      return;
+    }
+
+    document.getElementById("jobApplied").innerText = selectedJobRole;
+    goTo('thankYou');
+  }
+</script>
+
+</body>
+</html>
